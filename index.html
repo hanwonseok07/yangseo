@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>양서고</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1em;
+            text-align: center;
+        }
+
+        section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .intro-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4285f4;
+            color: white;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .images-container {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .school-logo {
+            width: 300px; /* 조절이 필요한 경우 조절하세요 */
+            height: auto; /* 자동으로 높이 계산 */
+            margin: 0 10px; /* 이미지 간격 조절 */
+        }
+        .school-front {
+            width: 700px; /* 조절이 필요한 경우 조절하세요 */
+            height: auto; /* 자동으로 높이 계산 */
+            margin: 0 10px; /* 이미지 간격 조절 */
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 1em;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>양서고</h1>
+    </header>
+
+    <section>
+        <div class="images-container">
+            <img src="yangsogo_logo.jpg" alt="양서고 로고" class="school-logo">
+            <img src="yangsogo_front.jpg" alt="양서고 전경" class="school-front">
+        </div>
+        <p>양서고를 소개합니다. 자세한 내용은 아래의 버튼을 클릭하세요.</p>
+        <a href="yangsogo_intro.html" class="intro-button">양서고 소개</a>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 양서고</p>
+    </footer>
+
+</body>
+</html>
