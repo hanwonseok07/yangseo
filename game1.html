@@ -1,94 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>도박 시뮬레이션</title>
+    <title>주사위 게임</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
-            padding: 20px;
+            width: 350px;
         }
-        #money {
-            font-size: 2em;
-            margin: 20px 0;
-        }
-        #bet-btn {
+        h1 {
             font-size: 1.5em;
-            padding: 10px 20px;
-            color: white;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+        .button {
             background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            cursor: pointer;
-        }
-        #bet-btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        #result {
-            margin: 20px 0;
-            font-size: 1.2em;
-        }
-        #history {
-            margin-top: 20px;
-            text-align: left;
             font-size: 1em;
-            color: #333;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        input[type="number"] {
+            padding: 10px;
+            width: 100px;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+        .result {
+            font-size: 1.2em;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-size: 1em;
+        }
+        .info {
+            font-size: 1.1em;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>도박 시뮬레이션</h1>
-    <div id="money">💰 현재 돈: 1000원</div>
-    <button id="bet-btn">도박하기</button>
-    <div id="result"></div>
-    <div id="history">
-        <h3>도박 기록</h3>
-        <ul id="history-list"></ul>
+    <div class="container">
+        <h1>주사위 게임</h1>
+        <p>자산: <span id="asset">1000</span>원</p>
+        <p>배팅할 금액: <span id="betAmount">500</span>원</p>
+        <div class="input-group">
+            <label for="betPercentage">배팅 비율(%): </label>
+            <input type="number" id="betPercentage" value="50" min="1" max="100">
+        </div>
+        <button class="button" onclick="rollDice()">주사위 던지기</button>
+        <p class="error" id="error"></p>
+        <div class="info" id="gameResult"></div>
     </div>
 
     <script>
-        let money = 1000;
+        let asset = 1000;  // 초기 자산 설정
 
-        const moneyDisplay = document.getElementById('money');
-        const resultDisplay = document.getElementById('result');
-        const betButton = document.getElementById('bet-btn');
-        const historyList = document.getElementById('history-list');
+        // 배팅 금액 계산 함수 (소수점 반올림)
+        function calculateBetAmount(percentage) {
+            return Math.round((asset * percentage) / 100);
+        }
 
-        betButton.addEventListener('click', () => {
-            if (money <= 0) return; // 돈이 없으면 도박 종료
+        // 주사위 던지기 함수
+        function rollDice() {
+            // 입력한 배팅 비율
+            let betPercentage = parseInt(document.getElementById('betPercentage').value);
+            let errorElement = document.getElementById('error');
+            let resultElement = document.getElementById('gameResult');
+            let betAmountElement = document.getElementById('betAmount');
 
-            let bet = Math.floor(money / 2); // 배팅 금액은 전재산의 50%
-            let win = Math.random() < 0.5; // 승률 50%
-            let change; // 잃거나 얻은 금액
+            // 배팅 비율 유효성 검사
+            if (betPercentage < 1 || betPercentage > 100) {
+                errorElement.textContent = "배팅 비율은 1% 이상 100% 이하로 설정해야 합니다.";
+                return;
+            }
+            errorElement.textContent = '';  // 오류 메시지 초기화
 
-            if (win) {
-                change = bet; // 승리 시 배팅 금액 2배
-                money += bet;
-                resultDisplay.textContent = `🎉 이겼습니다! 배팅금: ${bet}원, 획득: ${change}원`;
-            } else {
-                change = -bet; // 패배 시 배팅 금액 잃음
-                money -= bet;
-                resultDisplay.textContent = `💔 졌습니다ㅠ 배팅금: ${bet}원, 손실: ${-change}원`;
+            // 배팅 금액 계산
+            let betAmount = calculateBetAmount(betPercentage);
+            
+            if (betAmount > asset) {
+                errorElement.textContent = "배팅 금액이 자산을 초과합니다.";
+                return;
             }
 
-            // 돈 표시 업데이트
-            moneyDisplay.textContent = `💰 현재 돈: ${money}원`;
+            // 주사위 던지기
+            let diceRoll = Math.floor(Math.random() * 6) + 1;
+            let payout = 0;
+            let newAsset = asset;
 
-            // 기록 추가
-            const listItem = document.createElement('li');
-            listItem.textContent = `배팅금: ${bet}원, 결과: ${win ? "승리" : "패배"}, ${win ? `+${change}원` : `${change}원`} → 남은 돈: ${money}원`;
-            historyList.appendChild(listItem);
-
-            // 돈이 0원이 되면 버튼 비활성화
-            if (money <= 0) {
-                resultDisplay.textContent += " 게임이 종료되었습니다. 돈이 없습니다!";
-                betButton.disabled = true;
+            // 주사위 결과에 따른 배팅 결과
+            if (diceRoll === 1) {
+                payout = 0;  // 1이 나오면 전액 손실
+            } else if (diceRoll >= 2 && diceRoll <= 5) {
+                payout = Math.round(betAmount * 1.1);  // 2~5가 나오면 110%
+            } else if (diceRoll === 6) {
+                payout = Math.round(betAmount * 2);  // 6이 나오면 200%
             }
-        });
+
+            // 자산 업데이트
+            newAsset = asset - betAmount + payout;
+            asset = newAsset;
+
+            // 결과 표시
+            resultElement.innerHTML = `
+                주사위 결과: <strong>${diceRoll}</strong><br>
+                배팅 금액: <strong>${betAmount}</strong>원<br>
+                수익: <strong>${payout}</strong>원<br>
+                새로운 자산: <strong>${newAsset}</strong>원
+            `;
+
+            // 자산과 배팅할 금액 업데이트
+            document.getElementById('asset').textContent = newAsset;
+            let betAmountForNext = calculateBetAmount(betPercentage);  // 다음 주사위에 배팅할 금액 계산
+            document.getElementById('betAmount').textContent = betAmountForNext;
+        }
     </script>
 </body>
 </html>
