@@ -2,88 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>양서고</title>
+    <title>도박 시뮬레이션</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        header {
-            background-color: #333;
-            color: white;
-            padding: 1em;
+            background-color: #f4f4f9;
             text-align: center;
-        }
-
-        section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
             padding: 20px;
-            text-align: center;
         }
-
-        .intro-button {
+        #money {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+        #bet-btn {
+            font-size: 1.5em;
             padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4285f4;
             color: white;
-            text-decoration: none;
+            background-color: #007bff;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
         }
-
-        .images-container {
-            display: flex;
+        #bet-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #result {
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+        #history {
             margin-top: 20px;
-        }
-
-        .school-logo {
-            width: 300px; /* 조절이 필요한 경우 조절하세요 */
-            height: auto; /* 자동으로 높이 계산 */
-            margin: 0 10px; /* 이미지 간격 조절 */
-        }
-        .school-front {
-            width: 700px; /* 조절이 필요한 경우 조절하세요 */
-            height: auto; /* 자동으로 높이 계산 */
-            margin: 0 10px; /* 이미지 간격 조절 */
-        }
-
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 1em;
-            text-align: center;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            text-align: left;
+            font-size: 1em;
+            color: #333;
         }
     </style>
 </head>
 <body>
+    <h1>도박 시뮬레이션</h1>
+    <div id="money">💰 현재 돈: 1000원</div>
+    <button id="bet-btn">도박하기</button>
+    <div id="result"></div>
+    <div id="history">
+        <h3>도박 기록</h3>
+        <ul id="history-list"></ul>
+    </div>
 
-    <header>
-        <h1>양서고</h1>
-    </header>
+    <script>
+        let money = 1000;
 
-    <section>
-        <div class="images-container">
-            <img src="yangsogo_logo.jpg" alt="양서고 로고" class="school-logo">
-            <img src="yangsogo_front.jpg" alt="양서고 전경" class="school-front">
-        </div>
-        <p>양서고를 소개합니다. 자세한 내용은 아래의 버튼을 클릭하세요.</p>
-        <a href="yangsogo_intro.html" class="intro-button">양서고 소개</a>
-    </section>
+        const moneyDisplay = document.getElementById('money');
+        const resultDisplay = document.getElementById('result');
+        const betButton = document.getElementById('bet-btn');
+        const historyList = document.getElementById('history-list');
 
-    <footer>
-        <p>&copy; 2023 양서고</p>
-    </footer>
+        betButton.addEventListener('click', () => {
+            if (money <= 0) return; // 돈이 없으면 도박 종료
 
+            let bet = Math.floor(money / 2); // 배팅 금액은 전재산의 50%
+            let win = Math.random() < 0.5; // 승률 50%
+            let change; // 잃거나 얻은 금액
+
+            if (win) {
+                change = bet; // 승리 시 배팅 금액 2배
+                money += bet;
+                resultDisplay.textContent = `🎉 이겼습니다! 배팅금: ${bet}원, 획득: ${change}원`;
+            } else {
+                change = -bet; // 패배 시 배팅 금액 잃음
+                money -= bet;
+                resultDisplay.textContent = `💔 졌습니다. 배팅금: ${bet}원, 손실: ${-change}원`;
+            }
+
+            // 돈 표시 업데이트
+            moneyDisplay.textContent = `💰 현재 돈: ${money}원`;
+
+            // 기록 추가
+            const listItem = document.createElement('li');
+            listItem.textContent = `배팅금: ${bet}원, 결과: ${win ? "승리" : "패배"}, ${win ? `+${change}원` : `${change}원`} → 남은 돈: ${money}원`;
+            historyList.appendChild(listItem);
+
+            // 돈이 0원이 되면 버튼 비활성화
+            if (money <= 0) {
+                resultDisplay.textContent += " 게임이 종료되었습니다. 돈이 없습니다!";
+                betButton.disabled = true;
+            }
+        });
+    </script>
 </body>
 </html>
